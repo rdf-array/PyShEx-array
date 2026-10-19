@@ -62,6 +62,14 @@ class ManifestEntryTestCase:
         # Known engine gaps, honestly recorded: each entry is skipped with its reason
         # counted in the run summary.  Remove an entry when its gap is fixed.
         cls.expected_failures: dict[str, str] = {}
+        # RDF-: the 1list* schemas describe rdf:first/rdf:rest ladders, and data written
+        # `( ... )` is one sequence term under RDF-, which no ladder shape matches; the
+        # `manualList` data, written as explicit rdf:first triples, still passes.  In
+        # ShEx- these schemas are ((.)), ((IRI)) and ((IRI))[1, *] -- see doc/rdf-array.md.
+        ladder_over_sequence = "RDF-: an rdf:first/rdf:rest ladder shape over data written as ( ... ), one sequence term"
+        for name in ["1list0PlusDot-empty_pass", "1list0PlusDot-list_Iv1,Iv2,Iv3_pass", "1list0PlusDot-list_Iv1,Iv2,Lx_pass",
+                     "1list0PlusIri-empty_pass", "1list0PlusIri-list_Iv1,Iv2,Iv3_pass", "1list1PlusIri-list_Iv1,Iv2,Iv3_pass"]:
+            cls.expected_failures[name] = ladder_over_sequence
         cls.mfst = ShExManifest(os.path.join(BASE_FILE_LOC, 'validation', 'manifest.ttl'),
                                 manifest_format="turtle")
         if BASE_FILE_LOC != REMOTE_FILE_LOC:

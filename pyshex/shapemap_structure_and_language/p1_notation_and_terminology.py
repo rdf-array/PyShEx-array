@@ -2,6 +2,7 @@ import re
 from typing import Iterator
 
 from rdflib import URIRef, BNode, Literal, Graph
+from rdflib.term import Sequence
 
 #  This document assumes an understanding of the ShEx notation and terminology.
 #
@@ -16,7 +17,7 @@ from rdflib import URIRef, BNode, Literal, Graph
 
 # We have no idea what is intended in the above definition -- for the moment we'll define it as a function
 # ShapeExpression = Callable[[list[ShExJ.Shape], bool]]
-Node = URIRef | BNode | Literal
+Node = URIRef | BNode | Literal | Sequence  # RDF-: a sequence is a node too
 FocusNode = Node
 TripleSubject = URIRef | BNode
 TriplePredicate = URIRef

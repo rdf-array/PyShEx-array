@@ -1,5 +1,6 @@
 from pyjsg.jsglib import isinstance_
 from rdflib import BNode, URIRef, Literal, Graph
+from rdflib.term import Sequence
 from rdflib.namespace import NamespaceManager
 
 from pyshex.shapemap_structure_and_language.p1_notation_and_terminology import Triple
@@ -24,6 +25,9 @@ class N3Mapper:
             if node not in self._bnode_map:
                 self._bnode_map[node] = self._next_bnode
             return self._bnode_map[node]
+        elif isinstance(node, Sequence):
+            # RDF-: a sequence writes as a collection of its elements
+            return "(" + " ".join(self.n3(e) for e in node.elements) + ")"
         else:
             if not isinstance(node, (URIRef, Literal)):
                 node = URIRef(str(node))

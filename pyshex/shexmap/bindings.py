@@ -287,7 +287,7 @@ def triple_constraints(se, cntxt: Context | None = None) -> Iterator[ShExJ.Tripl
             stack.append(e.expression)
         elif isinstance(e, (ShExJ.ShapeAnd, ShExJ.ShapeOr)):
             stack.extend(e.shapeExprs)
-        elif isinstance(e, (ShExJ.ShapeNot, ShExJ.ShapeDecl)):
+        elif isinstance(e, (ShExJ.ShapeNot, ShExJ.ShapeDecl, ShExJ.Collection)):
             stack.append(e.shapeExpr)
         elif isinstance(e, str) and cntxt is not None:
             stack.append(cntxt.tripleExprFor(e))

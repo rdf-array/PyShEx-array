@@ -1,3 +1,29 @@
+<img src=".github/rdf-array-logo.png" alt="[PyShEx]" width="96" align="right">
+
+# PyShEx-array: PyShEx for RDF-
+
+**RDF-** fork of [PyShEx](https://github.com/linkml/PyShEx): ShEx over an RDF data model whose
+fifth kind of term is the **sequence**, `(1 2 3)`, in place of `rdf:first`/`rdf:rest` ladders.
+ShEx- adds one shape expression, the **Collection**, `((shapeExpr))[min, max]`:
+
+```shex
+<S> { :p ((LITERAL))[3] }          # :p's value is a sequence of exactly 3 literals
+<T> ((@<S> OR IRI))[1, *]          # a sequence of 1 or more, each a conformant <S> or an IRI
+<U> { :q ((((xsd:integer))[2])) }  # a sequence of pairs of integers, of any length
+```
+
+`[m]` is exactly m elements, `[m, n]` from m to n, `[m, *]` (or `[m,]`) at least m, and no bounds
+any length; `((x))` is always a Collection, `(x)` still a parenthesised shape expression. The data
+side is [rdflib-array](https://github.com/rdf-array/rdflib-array) (`rdflib.term.Sequence`), the
+ShExC parser [grammar-python-antlr-linkml-array](https://github.com/rdf-array/grammar-python-antlr-linkml-array)
+(`pyshexc`), the schema objects [ShExJSG-array](https://github.com/rdf-array/ShExJSG-array) and the
+collection flattener behind `shexeval -cf` [CFGraph-array](https://github.com/rdf-array/CFGraph-array),
+all pinned to their `rdf-sequences` branches through `[tool.uv.sources]` in pyproject.toml, so
+`uv sync` installs the whole stack from GitHub. [doc/rdf-array.md](doc/rdf-array.md) has the
+semantics, the changes in each fork, the tests flagged as ladder-dependent and what is not done.
+
+---
+
 This repository was originally developed by [Harold Solbrig](https://github.com/hsolbrig) and was kindly contributed
 to the LinkML organization because of his retirement. All credit for the original development of this repository goes
 to him.

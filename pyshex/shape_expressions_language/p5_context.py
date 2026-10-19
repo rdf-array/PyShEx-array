@@ -221,7 +221,7 @@ class Context:
         if isinstance(expr, (ShExJ.ShapeOr, ShExJ.ShapeAnd)):
             for expr2 in expr.shapeExprs:
                 self._gen_schema_xref(expr2)
-        elif isinstance(expr, ShExJ.ShapeNot):
+        elif isinstance(expr, (ShExJ.ShapeNot, ShExJ.Collection)):
             self._gen_schema_xref(expr.shapeExpr)
         elif isinstance(expr, ShExJ.Shape):
             if expr.expression is not None:
@@ -284,7 +284,7 @@ class Context:
             if isinstance(expr, (ShExJ.ShapeOr, ShExJ.ShapeAnd)):
                 for expr2 in expr.shapeExprs:
                     self.visit_shapes(expr2, f, arg_cntxt, visit_center, follow_inner_shapes=follow_inner_shapes)
-            elif isinstance(expr, ShExJ.ShapeNot):
+            elif isinstance(expr, (ShExJ.ShapeNot, ShExJ.Collection)):
                 self.visit_shapes(expr.shapeExpr, f, arg_cntxt, visit_center, follow_inner_shapes=follow_inner_shapes)
             elif isinstance(expr, ShExJ.Shape):
                 if expr.expression is not None and follow_inner_shapes:

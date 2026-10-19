@@ -2,6 +2,7 @@
 
 from ShExJSG import ShExJ
 from pyjsg.jsglib import isinstance_
+from rdflib.term import Sequence
 
 from pyshex.shape_expressions_language.p5_4_node_constraints import satisfiesNodeConstraint
 from pyshex.shape_expressions_language.p5_5_shapes_and_triple_expressions import satisfiesShape, \
@@ -52,6 +53,8 @@ def satisfies(cntxt: Context, n: Node, se: ShExJ.shapeExpr) -> bool:
         rval = satisfiesShapeAnd(cntxt, n, se)
     elif isinstance(se, ShExJ.ShapeNot):
         rval = satisfiesShapeNot(cntxt, n, se)
+    elif isinstance(se, ShExJ.Collection):
+        rval = satisfiesCollection(cntxt, n, se)
     elif isinstance(se, ShExJ.ShapeExternal):
         rval = satisfiesExternal(cntxt, n, se)
     elif isinstance_(se, ShExJ.shapeExprLabel):
@@ -113,7 +116,7 @@ def _extensions_index(cntxt: Context) -> dict[str, list]:
                 if isinstance(e, (ShExJ.ShapeAnd, ShExJ.ShapeOr)):
                     for nested in e.shapeExprs:
                         walk(nested)
-                elif isinstance(e, ShExJ.ShapeNot):
+                elif isinstance(e, (ShExJ.ShapeNot, ShExJ.Collection)):
                     walk(e.shapeExpr)
                 elif isinstance(e, ShExJ.Shape):
                     for parent in getattr(e, 'extends', None) or []:
@@ -167,6 +170,23 @@ def satisfiesShapeNot(cntxt: Context, n: Node, se: ShExJ.ShapeNot, _: DebugConte
     """ Se is a ShapeNot and for the shape expression se2 at shapeExpr, notSatisfies(n, se2, G, m) """
     with suspended_inherited_closed(cntxt, n):
         return not satisfies(cntxt, n, se.shapeExpr)
+
+
+@trace_satisfies()
+def satisfiesCollection(cntxt: Context, n: Node, se: ShExJ.Collection, _: DebugContext) -> bool:
+    """ RDF-: Se is a Collection, ((shapeExpr))[min, max], and n is a sequence of min to max elements each of which
+        satisfies(e, shapeExpr, G, m).  Each element is a focus node of its own, like a triple constraint's value. """
+    if not isinstance(n, Sequence):
+        cntxt.fail_reason = f"Node kind mismatch have: {type(n).__name__} expected: sequence"
+        return False
+    min_ = se.min if se.min is not None else 0
+    max_ = se.max if se.max is not None else -1
+    if len(n) < min_ or (max_ != -1 and len(n) > max_):
+        expected = f"{min_}" if max_ == min_ else f"at least {min_}" if max_ == -1 else f"{min_} to {max_}"
+        cntxt.fail_reason = f"Sequence of {len(n)} element{'' if len(n) == 1 else 's'} where {expected} expected"
+        return False
+    with suspended_inherited_closed(cntxt, n):
+        return all(satisfies(cntxt, e, se.shapeExpr) for e in n.elements)
 
 
 @trace_satisfies(True)

@@ -1,3 +1,4 @@
+import pytest
 from pyshex import ShExEvaluator
 from pyshex.shex_evaluator import EvaluationResult
 from tests.conftest import BIOLINK_NEW_META_SHEX_PATH, BIOLINK_META_SHEX_PATH
@@ -270,6 +271,7 @@ def test_full_meta(biolink_meta_rdf):
     assert not evaluator.evaluate()[0].result
 
 
+@pytest.mark.xfail(reason='RDF-: the schema describes lists as rdf:first/rdf:rest ladder shapes, which no sequence term `( ... )` matches; ((@<Item>))[1, *] is the ShEx- form', strict=True)
 def test_new_meta(biolink_meta_rdf):
     with open(BIOLINK_NEW_META_SHEX_PATH) as f:
         evaluator = ShExEvaluator(

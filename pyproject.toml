@@ -36,6 +36,7 @@ dependencies = [
     "cfgraph>=0.2.1",
     "chardet",
     "pyshexc>=0.10.3",
+    "rdflib",  # RDF-: a direct dependency, so [tool.uv.sources] can pin it to rdflib-array
     "rdflib-shim",
     "requests>=2.22.0",
     "shexjsg>=0.9.0",
@@ -105,5 +106,13 @@ deps = [
 commands = [
   ["codespell", "{posargs}"]
 ]
+[tool.uv]
+# RDF-: rdflib-array's version is upstream's pre-release (7.7.0a0)
+prerelease = "allow"
+
 [tool.uv.sources]
-pyshexc = { git = "https://github.com/ericprud/grammar-python-antlr-linkml.git", branch = "extends-shaperef" }
+# RDF-: the ShEx- stack comes from the rdf-array forks, branch rdf-sequences
+pyshexc = { git = "https://github.com/rdf-array/grammar-python-antlr-linkml-array.git", branch = "rdf-sequences" }
+shexjsg = { git = "https://github.com/rdf-array/ShExJSG-array.git", branch = "rdf-sequences" }
+cfgraph = { git = "https://github.com/rdf-array/CFGraph-array.git", branch = "rdf-sequences" }
+rdflib = { git = "https://github.com/rdf-array/rdflib-array.git", branch = "rdf-sequences" }

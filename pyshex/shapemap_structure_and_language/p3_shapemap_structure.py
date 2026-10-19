@@ -3,6 +3,7 @@ from typing import NamedTuple, Any
 import jsonasobj
 from jsonasobj import JsonObj
 from rdflib import BNode, URIRef, Literal
+from rdflib.term import Sequence
 from pyshex.utils.stringtoken import StringToken
 from pyshex.shapemap_structure_and_language.p1_notation_and_terminology import Node
 
@@ -117,7 +118,10 @@ class ShapeAssociation(JsonObj):
     def __init__(self, nodeSelector: nodeSelector | str, shapeLabel: shapeLabel,
                  status: status=None, reason: reason=None,
                  appinfo: appinfo=None) -> None:
-        if not isinstance(nodeSelector, (Literal, URIRef, BNode)):
+        if isinstance(nodeSelector, list):
+            # RDF-: a sequence node, written as the array of its elements
+            nodeSelector = Sequence(ShapeAssociation(e, shapeLabel).nodeSelector for e in nodeSelector)
+        if not isinstance(nodeSelector, (Literal, URIRef, BNode, Sequence)):
             if nodeSelector.startswith('_:'):
                 # a told blank node, addressed by its label
                 nodeSelector = BNode(nodeSelector[2:])

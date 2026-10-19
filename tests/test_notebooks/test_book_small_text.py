@@ -1,3 +1,4 @@
+import pytest
 from rdflib import Namespace
 
 from pyshex import ShExEvaluator
@@ -135,6 +136,7 @@ PREFIX locid: <http://id.loc.gov/vocabulary/identifiers/>
 """
 
 
+@pytest.mark.xfail(reason='RDF-: the schema describes lists as rdf:first/rdf:rest ladder shapes, which no sequence term `( ... )` matches; ((@<Item>))[1, *] is the ShEx- form', strict=True)
 def test_bibframe_work_conforms() -> None:
     results = ShExEvaluator().evaluate(RDF_DATA, SHEX, focus=BASE.samples9298996, start=BASE.Work)
     assert all(r.result for r in results)

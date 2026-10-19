@@ -43,7 +43,7 @@ def triple_in_shape(expr: ShExJ.shapeExpr, label: ShExJ.tripleExprLabel, cntxt: 
             te = triple_in_shape(expr2, label, cntxt)
             if te is not None:
                 break
-    elif isinstance(expr, ShExJ.ShapeNot):
+    elif isinstance(expr, (ShExJ.ShapeNot, ShExJ.Collection)):
         te = triple_in_shape(expr.shapeExpr, label, cntxt)
     elif isinstance(expr, ShExJ.shapeExprLabel):
         se = reference_of(expr, cntxt)

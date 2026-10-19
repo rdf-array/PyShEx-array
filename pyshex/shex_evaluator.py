@@ -5,6 +5,7 @@ from typing import NamedTuple, Type, Iterator, Callable
 from CFGraph import CFGraph
 from ShExJSG import ShExJ, ShExC
 from rdflib import Graph, URIRef, RDF
+from rdflib.term import Node
 from rdflib.util import guess_format
 from sparqlslurper import QueryResultPrinter
 
@@ -33,8 +34,8 @@ STARTPARM = [Type[START] | START_TYPE | URILIST]
 
 
 def normalize_uri(u: URI) -> URIRef:
-    """ Return a URIRef for a str or URIRef """
-    return u if isinstance(u, URIRef) else URIRef(str(u))
+    """ Return a URIRef for a str or URIRef; an rdflib term (a BNode, or RDF-: a Sequence) is kept as it is """
+    return u if isinstance(u, Node) else URIRef(str(u))
 
 
 def normalize_urilist(ul: URILIST) -> list[URIRef]:

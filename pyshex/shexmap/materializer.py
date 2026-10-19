@@ -57,6 +57,7 @@ from typing import Any
 
 from ShExJSG import ShExJ
 from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.term import Sequence
 from rdflib.term import Node
 
 from pyshex.parse_tree.parse_node import ParseNode
@@ -630,6 +631,8 @@ class ThreadedMaterializer:
             return any(self._satisfies(p, value) for p in se.shapeExprs)
         if isinstance(se, ShExJ.ShapeNot):
             return not self._satisfies(se.shapeExpr, value)
+        if isinstance(se, ShExJ.Collection):  # RDF-: not materialized; a sequence value is taken as given
+            return isinstance(value, Sequence)
         return True                         # a shape: the nested materialization is the check
 
     def _mint(self, tc, scope: Scope, depth: int) -> BNode:
@@ -746,6 +749,8 @@ def _is_node_constraint(se) -> bool:
         return any(_is_node_constraint(p) for p in se.shapeExprs if not isinstance(p, str))
     if isinstance(se, ShExJ.ShapeNot):
         return _is_node_constraint(se.shapeExpr)
+    if isinstance(se, ShExJ.Collection):  # RDF-: constrains the node itself (a sequence)
+        return True
     return False
 
 
